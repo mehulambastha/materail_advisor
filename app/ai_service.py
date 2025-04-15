@@ -17,14 +17,17 @@ When given a product description, provide comprehensive material recommendations
 1. List appropriate materials for different components of the product
 2. For each material, include:
    - Full scientific name and common name
-   - Key properties (density, tensile strength, thermal conductivity, etc.)
+   - Key properties (density, tensile strength, thermal conductivity, endurance limit, fatigue strenth, etc., wherever relevant and necessary)
    - Specific applications within the product
    - Rationale for why this material is suitable
+   - Rough Cost of the materials required to make the specific part (in INR. Do not use the symbol for INR, just say INR)
 3. Potential material alternatives with pros and cons
 4. Manufacturing considerations related to material choices
 5. Cost considerations and trade-offs
 
-Format your response as structured JSON with the following format:
+Format your response as structured JSON with the following format: 
+
+
 {
   "materials": [
     {
@@ -37,13 +40,42 @@ Format your response as structured JSON with the following format:
       "rationale": "Why this material is suitable"
     }
   ],
-  "general_recommendations": "Overall advice about material selection"
+  "general_recommendations": "Overall advice about material selection",
+  "alt_materials": "Your potential material alternatives with Pros and Cons",
+  "manufacturing_considerations": "Manufacturing considerations related to material choices",
+  "cost_considerations": "Cost considerations and trade-offs"
 }
 
+make sure the JSON data has proper and conventional annotation, like 
+
 Include numerical values with proper units for all material properties.
+
+YOUR FINAL response SHOULD BE STRICTLY VALID JSON ONLY - all properties and values should be properly double quoted. everything should be valid JSON format.  
+(so that I can simply load your response in python with josn.loads(), with the folllowing strcuture - 
+{
+  "materials": [
+    {
+      "name": "Material name",
+      "properties": {
+        "property1": "value1",
+        "property2": "value2"
+      },
+      "application": "Where to use this material",
+      "rationale": "Why this material is suitable"
+    }
+  ],
+  "general_recommendations": "Overall advice about material selection",
+  "alt_materials": "Your potential material alternatives with Pros and Cons",
+  "manufacturing_considerations": "Manufacturing considerations related to material choices",
+  "cost_considerations": "Cost considerations and trade-offs"
+}
+
+
+    
+IMPORTANT: DO NOT HALLUCINATE. DO NOT GIVE FALSE INFORMATION. DO NOT MENTION YOUR NAME, OR THAT YOU ARE AN AI. ANSWER ONLY THOSE QUESTIONS RELATED TO PRODUC DEVELOPMENT AND MATERIAL SELECTION. DO NOT ENGAGE IN CONVERSATIONS OF ANY OTHER MATTER. FOR IRRELEVANT QUESTIONS ASKED, RETURN BACK AN ERROR MESSAGE SAYING INVALID PRODUCT DESCRIPTION.
 """
 
-def get_material_recommendations(product_description: str, additional_requirements: str = None) -> Dict[str, Any]:
+def get_material_recommendations(product_description: str, additional_requirements: Any = None) -> Dict[str, Any]:
     """
     Get material recommendations from Groq AI for a given product description
     """
@@ -70,11 +102,14 @@ def get_material_recommendations(product_description: str, additional_requiremen
         )
         
         response_content = response.choices[0].message.content
+        print("RESPONSE FORM AI IS : \n", response_content)
         
         # Try to parse as JSON
         try:
             material_data = json.loads(response_content)
+            print("return data loaded as JSON is : \n ", material_data)
         except json.JSONDecodeError:
+            print("JSON PARSING FAILED.")
             # If parsing fails, we'll need to extract JSON from the text
             import re
             json_match = re.search(r'```json\n(.*?)\n```', response_content, re.DOTALL)

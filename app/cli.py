@@ -44,6 +44,8 @@ def recommend_materials(
                     title="MaterialMind Results",
                     border_style="green"
                 ))
+
+                print("API RESULT RECIEVED IN CLI.PY IS:   ", result)
                 
                 # Create a table for the materials
                 table = Table(title="Recommended Materials")
