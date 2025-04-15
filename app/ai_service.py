@@ -27,7 +27,6 @@ When given a product description, provide comprehensive material recommendations
 
 Format your response as structured JSON with the following format: 
 
-
 {
   "materials": [
     {
@@ -46,33 +45,40 @@ Format your response as structured JSON with the following format:
   "cost_considerations": "Cost considerations and trade-offs"
 }
 
-make sure the JSON data has proper and conventional annotation, like 
+----------------------------------
+--> instructoin to follow for JSON response - 
+You are to generate a valid JSON object. The output must strictly conform to the JSON specification (RFC 8259).
 
-Include numerical values with proper units for all material properties.
+Follow these formatting and syntax rules with zero tolerance for deviation:
 
-YOUR FINAL response SHOULD BE STRICTLY VALID JSON ONLY - all properties and values should be properly double quoted. everything should be valid JSON format.  
-(so that I can simply load your response in python with josn.loads(), with the folllowing strcuture - 
-{
-  "materials": [
-    {
-      "name": "Material name",
-      "properties": {
-        "property1": "value1",
-        "property2": "value2"
-      },
-      "application": "Where to use this material",
-      "rationale": "Why this material is suitable"
-    }
-  ],
-  "general_recommendations": "Overall advice about material selection",
-  "alt_materials": "Your potential material alternatives with Pros and Cons",
-  "manufacturing_considerations": "Manufacturing considerations related to material choices",
-  "cost_considerations": "Cost considerations and trade-offs"
-}
+1. The output must be a single, standalone JSON object or array — no explanations, no comments, and no additional text.
 
+2. All keys must be in double quotes.
 
+3. All string values must be in double quotes, even those with units (e.g., "550 MPa", "7.9 g/cm³").
+
+4. Numeric values must not contain units. If a value includes a unit, treat it as a string.
+
+5. Boolean values must be lowercase: true or false.
+
+6. Use null only where required, and write it in lowercase.
+
+7. No trailing commas are allowed in arrays or objects.
+
+8. Multiline strings must be written as:
+
+    * A single line
+
+    * Or with explicit \\n escape characters inside a string
+
+9. Do not include any markdown syntax (e.g., json, triple backticks).
+
+10. Do not include comments, explanations, or metadata.
+
+11. The output must be internally validated before being returned to ensure it is 100% parsable and compliant with the JSON specification.
+------------------------------------
     
-IMPORTANT: DO NOT HALLUCINATE. DO NOT GIVE FALSE INFORMATION. DO NOT MENTION YOUR NAME, OR THAT YOU ARE AN AI. ANSWER ONLY THOSE QUESTIONS RELATED TO PRODUC DEVELOPMENT AND MATERIAL SELECTION. DO NOT ENGAGE IN CONVERSATIONS OF ANY OTHER MATTER. FOR IRRELEVANT QUESTIONS ASKED, RETURN BACK AN ERROR MESSAGE SAYING INVALID PRODUCT DESCRIPTION.
+IMPORTANT: DO NOT HALLUCINATE. DO NOT GIVE FALSE INFORMATION. DO NOT MENTION YOUR NAME, OR THAT YOU ARE AN AI. ANSWER ONLY THOSE QUESTIONS RELATED TO PRODUC DEVELOPMENT AND MATERIAL SELECTION. DO NOT ENGAGE IN CONVERSATIONS OF ANY OTHER MATTER. FOR IRRELEVANT QUESTIONS ASKED, RETURN BACK AN ERROR MESSAGE SAYING INVALID PRODUCT DESCRIPTION. 
 """
 
 def get_material_recommendations(product_description: str, additional_requirements: Any = None) -> Dict[str, Any]:
@@ -122,9 +128,9 @@ def get_material_recommendations(product_description: str, additional_requiremen
                     "materials": [
                         {
                             "name": "See recommendations",
-                            "properties": {"info": "See full text"},
-                            "application": "See full text",
-                            "rationale": "See full text"
+                            "properties": {"info": "NA"},
+                            "application": "NA",
+                            "rationale": "NA"
                         }
                     ],
                     "general_recommendations": response_content
@@ -133,6 +139,9 @@ def get_material_recommendations(product_description: str, additional_requiremen
         # Process and structure the response
         materials = []
         general_recommendations = material_data.get("general_recommendations", "")
+        alt_materials = material_data.get("alt_materials", "")
+        manufacturing_considerations = material_data.get("manufacturing_considerations", "")
+        cost_considerations = material_data.get("cost_considerations", "")
         
         for material in material_data.get("materials", []):
             materials.append({
@@ -144,7 +153,10 @@ def get_material_recommendations(product_description: str, additional_requiremen
         
         return {
             "materials": materials,
-            "general_recommendations": general_recommendations
+            "general_recommendations": general_recommendations,
+            "alt_materials": alt_materials,
+            "manufacturing_considerations": manufacturing_considerations,
+            "cost_considerations": cost_considerations
         }
     
     except Exception as e:
