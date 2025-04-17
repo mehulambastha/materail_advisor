@@ -39,10 +39,10 @@ Format your response as structured JSON with the following format:
       "rationale": "Why this material is suitable"
     }
   ],
-  "general_recommendations": "Overall advice about material selection",
-  "alt_materials": "Your potential material alternatives with Pros and Cons",
-  "manufacturing_considerations": "Manufacturing considerations related to material choices",
-  "cost_considerations": "Cost considerations and trade-offs"
+  "general_recommendations": "Overall advice about material selection. Atleast 120 words",
+  "alt_materials": "Your potential material alternatives with Pros and Cons. Keep this as simple text paragraph. Atleast 120 words",
+  "manufacturing_considerations": "Manufacturing considerations related to material choices. Atleast 120 words",
+  "cost_considerations": "Cost considerations and trade-offs. Atleast 120 words"
 }
 
 ----------------------------------

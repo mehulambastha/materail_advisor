@@ -140,6 +140,7 @@ def generate_pdf(recommendations: Dict[str, Any], filename: str) -> str:
              pdf.rect(current_x, start_y, col_width, actual_row_height) # Draw border rectangle
              current_x += col_width
 
+
         # After drawing all cells & borders, move the cursor below the row
         pdf.set_y(max_y)
 
